@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capture the Flag — Draw It!</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏳️</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <h1>🏳️ Capture the Flag</h1>
+    <p class="tagline">You get a country. You build its flag. We score the result.</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-value" id="statPlayed">0</span><span class="stat-label">Played</span></div>
+      <div class="stat"><span class="stat-value" id="statAvg">0%</span><span class="stat-label">Average</span></div>
+      <div class="stat"><span class="stat-value" id="statBest">0%</span><span class="stat-label">Best</span></div>
+      <label class="difficulty-picker">
+        Difficulty
+        <select id="difficultySelect">
+          <option value="all">All</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section id="gamePanel" class="panel">
+      <div class="prompt-row">
+        <div>
+          <div class="prompt-label">Draw the flag of</div>
+          <div class="country-name" id="countryName">—</div>
+        </div>
+        <span class="badge" id="difficultyBadge">easy</span>
+      </div>
+
+      <div class="editor-layout">
+        <div class="toolbar">
+          <div class="tool-group">
+            <div class="tool-group-title">Mode</div>
+            <div class="mode-row">
+              <button id="btnSelect" class="mode-btn active" title="Select / move / resize">↖ Select</button>
+              <button id="btnPencil" class="mode-btn" title="Freehand pencil">✏ Pencil</button>
+            </div>
+            <label class="brush-row">
+              Brush size
+              <input type="range" id="brushSize" min="2" max="24" value="6">
+            </label>
+          </div>
+
+          <div class="tool-group">
+            <div class="tool-group-title">Drag flag parts onto the canvas</div>
+            <div id="shapeTools" class="shape-grid"></div>
+          </div>
+
+          <div class="tool-group">
+            <div class="tool-group-title">Color</div>
+            <div id="colorPalette" class="palette-grid"></div>
+            <label class="custom-color-row">
+              Custom
+              <input type="color" id="customColor" value="#c0392b">
+            </label>
+          </div>
+
+          <div class="tool-group">
+            <div class="tool-group-title">Selected shape</div>
+            <div class="action-row">
+              <button id="btnOrientation" title="Flip/rotate selected triangle or crescent">⤾ Flip</button>
+              <button id="btnFront" title="Bring to front">⬆ Front</button>
+              <button id="btnBack" title="Send to back">⬇ Back</button>
+              <button id="btnDelete" title="Delete selected">🗑 Delete</button>
+            </div>
+          </div>
+
+          <div class="tool-group">
+            <div class="tool-group-title">Canvas</div>
+            <div class="action-row">
+              <button id="btnBackground" title="Fill whole flag with current color">🪣 Set Background</button>
+            </div>
+            <div class="action-row">
+              <button id="btnUndo" title="Undo last action">↩ Undo</button>
+              <button id="btnClear" title="Clear everything">✖ Clear All</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="canvas-area">
+          <div class="canvas-wrap">
+            <canvas id="flagCanvas" width="300" height="200"></canvas>
+          </div>
+          <button id="btnSubmit" class="btn-primary">Check My Score</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultPanel" class="panel hidden">
+      <h2>Results: <span id="resultCountry"></span></h2>
+      <div class="score-block">
+        <div class="score-value" id="scoreValue">0%</div>
+        <div class="tier-label" id="tierLabel"></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-col">
+          <div class="compare-title">Your Flag</div>
+          <canvas id="compareYours"></canvas>
+        </div>
+        <div class="compare-col">
+          <div class="compare-title">Actual Flag</div>
+          <canvas id="compareActual"></canvas>
+        </div>
+      </div>
+      <div class="action-row center">
+        <button id="btnRetryFromResult">↺ Retry This Flag</button>
+        <button id="btnNextFromResult" class="btn-primary">Next Flag →</button>
+      </div>
+    </section>
+
+    <div class="action-row center bottom-nav">
+      <button id="btnRetry" title="Restart with the same country">↺ Retry</button>
+      <button id="btnNext" title="Skip to a new country">Skip →</button>
+    </div>
+  </main>
+
+  <footer>
+    Flags are approximated with simple shapes for gameplay — colors and proportions aren't official.
+  </footer>
+</div>
+
+<script type="module" src="js/game.js"></script>
+</body>
+</html>

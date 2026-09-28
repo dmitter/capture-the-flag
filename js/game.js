@@ -34,7 +34,9 @@ function loadStats() {
     return JSON.parse(localStorage.getItem(STATS_KEY)) || { played: 0, totalScore: 0, best: 0 };
   } catch { return { played: 0, totalScore: 0, best: 0 }; }
 }
-function saveStats(s) { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+function saveStats(s) {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch { /* storage unavailable */ }
+}
 
 function $(sel) { return document.querySelector(sel); }
 function el(tag, cls, text) {

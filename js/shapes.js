@@ -1,7 +1,7 @@
 // Shared shape rendering + hit-testing used by both the flag editor (user drawing)
 // and the reference renderer (actual flags), so scoring compares like-for-like pixels.
 //
-// A "shape" is a plain object: { type, x, y, w, h, color, dir?, points? }
+// A "shape" is a plain object: { type, x, y, w, h, color, dir?, points?, inner?, text? }
 // x/y/w/h are fractions of the flag canvas (0..1), independent of pixel resolution.
 
 export function drawShape(ctx, s, W, H) {
@@ -46,16 +46,36 @@ export function drawShape(ctx, s, W, H) {
       ctx.fill();
       break;
     }
-    case 'star': {
-      drawStar(ctx, x + w / 2, y + h / 2, w / 2, h / 2, s.points || 5);
+    case 'star':
+    case 'sun': {
+      const pts = s.points || (s.type === 'sun' ? 20 : 5);
+      const inner = s.inner != null ? s.inner : (s.type === 'sun' ? 0.55 : 0.42);
+      drawStar(ctx, x + w / 2, y + h / 2, w / 2, h / 2, pts, inner);
       break;
     }
     case 'crescent': {
       drawCrescent(ctx, x, y, w, h, s.dir || 'right');
       break;
     }
+    case 'text': {
+      drawText(ctx, x, y, w, h, s.text || 'LABEL');
+      break;
+    }
   }
   ctx.restore();
+}
+
+function drawText(ctx, x, y, w, h, text) {
+  let fontSize = h * 0.8;
+  ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+  const measured = ctx.measureText(text).width;
+  if (measured > w && measured > 0) {
+    fontSize *= w / measured;
+    ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + w / 2, y + h / 2);
 }
 
 function drawStar(ctx, cx, cy, rx, ry, points = 5, inner = 0.42) {

@@ -21,6 +21,7 @@ const SHAPE_TOOLS = [
   { type: 'triangle', label: 'Triangle', icon: '▶' },
   { type: 'diamond', label: 'Diamond', icon: '◆' },
   { type: 'star', label: 'Star', icon: '★' },
+  { type: 'sun', label: 'Sun', icon: '☀' },
   { type: 'crescent', label: 'Crescent', icon: '☾' },
 ];
 
@@ -47,6 +48,7 @@ function el(tag, cls, text) {
 }
 
 let editor;
+let lastSyncedSelectionId = null;
 
 function buildPalette() {
   const wrap = $('#colorPalette');
@@ -80,7 +82,7 @@ function buildShapeTools() {
     btn.draggable = true;
     btn.title = `Drag onto the canvas, or click then click the canvas to place a ${label}`;
     btn.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('text/plain', `${type}:right`);
+      e.dataTransfer.setData('text/plain', JSON.stringify({ type, dir: 'right' }));
     });
     btn.addEventListener('click', () => {
       editor.armShape(type, 'right');
@@ -90,10 +92,27 @@ function buildShapeTools() {
   });
 }
 
+function buildLabelTool() {
+  const input = $('#labelText');
+  const btn = $('#btnAddLabel');
+  btn.draggable = true;
+  btn.addEventListener('dragstart', e => {
+    const text = input.value.trim() || 'LABEL';
+    e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'text', dir: 'right', extra: { text } }));
+  });
+  btn.addEventListener('click', () => {
+    const text = input.value.trim() || 'LABEL';
+    editor.armShape('text', 'right', { text });
+    syncToolbarUI();
+  });
+}
+
 function syncToolbarUI() {
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-  if (editor.armedType) {
+  if (editor.armedType === 'text') {
+    $('#btnAddLabel').classList.add('active');
+  } else if (editor.armedType) {
     const idx = SHAPE_TOOLS.findIndex(t => t.type === editor.armedType);
     const btn = $('#shapeTools').children[idx];
     if (btn) btn.classList.add('active');
@@ -104,6 +123,24 @@ function syncToolbarUI() {
   }
   const sel = editor.selected;
   highlightSwatch(sel ? sel.color : editor.currentColor);
+
+  const isStarLike = sel && (sel.type === 'star' || sel.type === 'sun');
+  $('#pointsControl').hidden = !isStarLike;
+  if (isStarLike) $('#pointsValue').textContent = sel.points || (sel.type === 'sun' ? 20 : 5);
+
+  const isText = sel && sel.type === 'text';
+  $('#textControl').hidden = !isText;
+  const selectionChanged = (sel ? sel.id : null) !== lastSyncedSelectionId;
+  if (isText && selectionChanged && document.activeElement === $('#labelEditInput')) {
+    // Selection moved to a different shape while the input stayed focused
+    // (e.g. clicking straight from one label to another) — the 'focus' event
+    // won't refire, so snapshot now or an undo could miss this edit session.
+    editor.beginTextEdit();
+  }
+  if (isText && (selectionChanged || document.activeElement !== $('#labelEditInput'))) {
+    $('#labelEditInput').value = sel.text || '';
+  }
+  lastSyncedSelectionId = sel ? sel.id : null;
 }
 
 function newRound(keepFlag) {
@@ -115,6 +152,7 @@ function newRound(keepFlag) {
   editor.bgColor = '#ffffff';
   editor.selectedId = null;
   editor.armedType = null;
+  editor.armedExtra = null;
   editor.mode = 'select';
   editor.history = [];
   editor.render();
@@ -170,6 +208,7 @@ function init() {
 
   buildPalette();
   buildShapeTools();
+  buildLabelTool();
   highlightSwatch(editor.currentColor);
   editor.onChange = syncToolbarUI;
 
@@ -179,7 +218,6 @@ function init() {
   });
 
   $('#btnSelect').addEventListener('click', () => {
-    editor.armedType = null;
     editor.setMode('select');
     syncToolbarUI();
   });
@@ -194,6 +232,10 @@ function init() {
   $('#btnFront').addEventListener('click', () => editor.bringToFront());
   $('#btnBack').addEventListener('click', () => editor.sendToBack());
   $('#btnDelete').addEventListener('click', () => editor.deleteSelected());
+  $('#btnPointsMinus').addEventListener('click', () => editor.adjustPoints(-1));
+  $('#btnPointsPlus').addEventListener('click', () => editor.adjustPoints(1));
+  $('#labelEditInput').addEventListener('focus', () => editor.beginTextEdit());
+  $('#labelEditInput').addEventListener('input', e => editor.setSelectedText(e.target.value));
   $('#btnUndo').addEventListener('click', () => editor.undo());
   $('#btnClear').addEventListener('click', () => {
     if (confirm('Clear the whole drawing?')) editor.clearAll();
@@ -205,7 +247,6 @@ function init() {
       editor.deleteSelected();
     }
     if (e.key === 'Escape') {
-      editor.armedType = null;
       editor.setMode('select');
       syncToolbarUI();
     }

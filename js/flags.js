@@ -152,6 +152,23 @@ export const FLAGS = [
   { name: 'Brazil', difficulty: 'hard', bg: '#009739', shapes: [
     { type: 'diamond', x: 0.2, y: 0.125, w: 0.6, h: 0.75, color: '#FEDD00' },
     { type: 'circle', x: 0.367, y: 0.3, w: 0.267, h: 0.4, color: '#002776' },
+    { type: 'text', x: 0.38, y: 0.478, w: 0.24, h: 0.045, color: '#FFFFFF', text: 'ORDEM E PROGRESSO' },
+  ]},
+  { name: 'Israel', difficulty: 'medium', bg: '#FFFFFF', shapes: [
+    { type: 'rect', x: 0, y: 0.14, w: 1, h: 0.13, color: '#0038B8' },
+    { type: 'rect', x: 0, y: 0.73, w: 1, h: 0.13, color: '#0038B8' },
+    { type: 'star', x: 0.35, y: 0.275, w: 0.3, h: 0.45, color: '#0038B8', points: 6, inner: 0.55 },
+  ]},
+  { name: 'Argentina', difficulty: 'medium', bg: '#FFFFFF', shapes: [
+    { type: 'rect', x: 0, y: 0, w: 1, h: 1/3, color: '#74ACDF' },
+    { type: 'rect', x: 0, y: 2/3, w: 1, h: 1/3, color: '#74ACDF' },
+    { type: 'sun', x: 0.39, y: 0.335, w: 0.22, h: 0.33, color: '#F6B40E' },
+  ]},
+  { name: 'Kazakhstan', difficulty: 'medium', bg: '#00AFCA', shapes: [
+    { type: 'sun', x: 0.35, y: 0.275, w: 0.3, h: 0.45, color: '#FEC50C' },
+  ]},
+  { name: 'Kyrgyzstan', difficulty: 'medium', bg: '#E8112D', shapes: [
+    { type: 'sun', x: 0.35, y: 0.275, w: 0.3, h: 0.45, color: '#FFD700', points: 32 },
   ]},
   { name: 'Czech Republic', difficulty: 'hard', bg: '#FFFFFF', shapes: [
     { type: 'rect', x: 0, y: 0.5, w: 1, h: 0.5, color: '#D7141A' },
@@ -162,6 +179,27 @@ export const FLAGS = [
     { type: 'rect', x: 0, y: 0.6, w: 1, h: 0.2, color: '#FFFFFF' },
     { type: 'triangle', x: 0, y: 0, w: 0.35, h: 1, color: '#CB1515', dir: 'right' },
     { type: 'star', x: 0.1, y: 0.41, w: 0.12, h: 0.18, color: '#FFFFFF' },
+  ]},
+  { name: 'Uruguay', difficulty: 'hard', bg: '#FFFFFF', shapes: [
+    { type: 'rect', x: 0, y: 1/9, w: 1, h: 1/9, color: '#0038A8' },
+    { type: 'rect', x: 0, y: 3/9, w: 1, h: 1/9, color: '#0038A8' },
+    { type: 'rect', x: 0, y: 5/9, w: 1, h: 1/9, color: '#0038A8' },
+    { type: 'rect', x: 0, y: 7/9, w: 1, h: 1/9, color: '#0038A8' },
+    { type: 'rect', x: 0, y: 0, w: 0.37, h: 0.556, color: '#FFFFFF' },
+    { type: 'sun', x: 0.112, y: 0.168, w: 0.147, h: 0.22, color: '#FCD116' },
+  ]},
+  { name: 'Ethiopia', difficulty: 'hard', bg: '#FCDD09', shapes: [
+    { type: 'rect', x: 0, y: 0, w: 1, h: 1/3, color: '#078930' },
+    { type: 'rect', x: 0, y: 2/3, w: 1, h: 1/3, color: '#DA121A' },
+    { type: 'circle', x: 0.367, y: 0.3, w: 0.267, h: 0.4, color: '#0F47AF' },
+    { type: 'star', x: 0.42, y: 0.38, w: 0.16, h: 0.24, color: '#FCDD09' },
+  ]},
+  { name: 'Australia', difficulty: 'hard', bg: '#00247D', shapes: [
+    { type: 'star', x: 0.08, y: 0.62, w: 0.14, h: 0.21, color: '#FFFFFF', points: 7 },
+    { type: 'star', x: 0.62, y: 0.12, w: 0.09, h: 0.135, color: '#FFFFFF' },
+    { type: 'star', x: 0.78, y: 0.28, w: 0.09, h: 0.135, color: '#FFFFFF' },
+    { type: 'star', x: 0.72, y: 0.55, w: 0.09, h: 0.135, color: '#FFFFFF' },
+    { type: 'star', x: 0.58, y: 0.42, w: 0.07, h: 0.105, color: '#FFFFFF' },
   ]},
 ];
 

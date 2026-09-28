@@ -195,6 +195,52 @@ body {
 }
 .custom-color-row input { width: 44px; height: 26px; border: none; background: none; cursor: pointer; }
 
+.label-add-row {
+  display: flex;
+  gap: 6px;
+}
+.label-add-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.82rem;
+}
+.label-add-row .tool-btn { flex-shrink: 0; padding: 6px 12px; cursor: grab; }
+
+.detail-row[hidden] { display: none; }
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.detail-row button {
+  border: 1px solid var(--border);
+  background: #fafbfd;
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.detail-row button:hover { background: #eef3fb; }
+#pointsValue { min-width: 20px; text-align: center; font-weight: 700; color: var(--ink); }
+.detail-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.82rem;
+}
+
 .action-row {
   display: flex;
   gap: 6px;

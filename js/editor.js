@@ -8,8 +8,12 @@ const PRESETS = {
   triangle: { w: 0.35, h: 0.5 },
   diamond:  { w: 0.3,  h: 0.45 },
   star:     { w: 0.22, h: 0.32 },
+  sun:      { w: 0.32, h: 0.48 },
   crescent: { w: 0.3,  h: 0.45 },
+  text:     { w: 0.5,  h: 0.09 },
 };
+
+const MIN_POINTS = 3, MAX_POINTS = 32;
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 let uidCounter = 1;
@@ -29,6 +33,7 @@ export class FlagEditor {
     this.mode = 'select'; // 'select' | 'pencil'
     this.armedType = null;
     this.armedDir = 'right';
+    this.armedExtra = null;
     this.currentColor = '#c0392b';
     this.brushSize = 6;
 
@@ -84,7 +89,7 @@ export class FlagEditor {
   }
 
   // ---------- shape ops ----------
-  addShapeAt(type, nx, ny, dir) {
+  addShapeAt(type, nx, ny, dir, extra) {
     this._snapshot();
     const preset = PRESETS[type] || { w: 0.2, h: 0.2 };
     let w = preset.w, h = preset.h, x, y;
@@ -93,6 +98,9 @@ export class FlagEditor {
     else { x = clamp(nx - w / 2, 0, 1 - w); y = clamp(ny - h / 2, 0, 1 - h); }
     const shape = { id: uid(), type, x, y, w, h, color: this.currentColor };
     if (type === 'triangle' || type === 'crescent') shape.dir = dir || this.armedDir || 'right';
+    if (type === 'star') shape.points = 5;
+    if (type === 'sun') shape.points = 20;
+    if (type === 'text') shape.text = (extra && extra.text) ? extra.text.slice(0, 24) : 'LABEL';
     this.shapes.push(shape);
     this.selectedId = shape.id;
     this._emit();
@@ -137,6 +145,29 @@ export class FlagEditor {
     this._emit();
   }
 
+  adjustPoints(delta) {
+    const s = this.selected;
+    if (!s || (s.type !== 'star' && s.type !== 'sun')) return;
+    this._snapshot();
+    const current = s.points || (s.type === 'sun' ? 20 : 5);
+    s.points = Math.max(MIN_POINTS, Math.min(MAX_POINTS, current + delta));
+    this._emit();
+  }
+
+  // Text editing is continuous (keystroke-by-keystroke), so the caller snapshots
+  // once via beginTextEdit() before the first keystroke instead of every change.
+  beginTextEdit() {
+    if (this.selected) this._snapshot();
+  }
+
+  setSelectedText(text) {
+    const s = this.selected;
+    if (!s || s.type !== 'text') return;
+    s.text = text.slice(0, 24);
+    this.render();
+    if (this.onChange) this.onChange();
+  }
+
   bringToFront() {
     const s = this.selected;
     if (!s) return;
@@ -157,13 +188,16 @@ export class FlagEditor {
 
   setMode(mode) {
     this.mode = mode;
-    if (mode === 'pencil') { this.armedType = null; this.selectedId = null; this.render(); }
+    this.armedType = null;
+    this.armedExtra = null;
+    if (mode === 'pencil') { this.selectedId = null; this.render(); }
   }
 
-  armShape(type, dir) {
+  armShape(type, dir, extra) {
     this.mode = 'select';
     this.armedType = type;
     this.armedDir = dir || 'right';
+    this.armedExtra = extra || null;
     this.selectedId = null;
     this.render();
   }
@@ -178,11 +212,12 @@ export class FlagEditor {
     c.addEventListener('dragover', e => e.preventDefault());
     c.addEventListener('drop', e => {
       e.preventDefault();
-      const data = e.dataTransfer.getData('text/plain');
-      if (!data) return;
-      const [type, dir] = data.split(':');
+      const raw = e.dataTransfer.getData('text/plain');
+      if (!raw) return;
+      let payload;
+      try { payload = JSON.parse(raw); } catch { return; }
       const { x, y } = this._toNorm(e.clientX, e.clientY);
-      this.addShapeAt(type, x, y, dir);
+      this.addShapeAt(payload.type, x, y, payload.dir, payload.extra);
     });
   }
 
@@ -215,9 +250,10 @@ export class FlagEditor {
     }
 
     if (this.armedType) {
-      const type = this.armedType, dir = this.armedDir;
+      const type = this.armedType, dir = this.armedDir, extra = this.armedExtra;
       this.armedType = null;
-      this.addShapeAt(type, nx, ny, dir);
+      this.armedExtra = null;
+      this.addShapeAt(type, nx, ny, dir, extra);
       return;
     }
 

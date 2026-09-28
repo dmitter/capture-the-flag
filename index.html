@@ -59,6 +59,14 @@
           </div>
 
           <div class="tool-group">
+            <div class="tool-group-title">Add a text label</div>
+            <div class="label-add-row">
+              <input type="text" id="labelText" maxlength="24" placeholder="e.g. LIBERTY">
+              <button id="btnAddLabel" class="tool-btn" title="Drag onto the canvas, or click then click the canvas">Add</button>
+            </div>
+          </div>
+
+          <div class="tool-group">
             <div class="tool-group-title">Color</div>
             <div id="colorPalette" class="palette-grid"></div>
             <label class="custom-color-row">
@@ -74,6 +82,15 @@
               <button id="btnFront" title="Bring to front">⬆ Front</button>
               <button id="btnBack" title="Send to back">⬇ Back</button>
               <button id="btnDelete" title="Delete selected">🗑 Delete</button>
+            </div>
+            <div id="pointsControl" class="detail-row" hidden>
+              Points
+              <button id="btnPointsMinus" title="Fewer points">−</button>
+              <span id="pointsValue">5</span>
+              <button id="btnPointsPlus" title="More points">+</button>
+            </div>
+            <div id="textControl" class="detail-row" hidden>
+              <input type="text" id="labelEditInput" maxlength="24" placeholder="Label text">
             </div>
           </div>
 
